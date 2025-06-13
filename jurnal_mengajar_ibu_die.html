@@ -1,0 +1,114 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>JURNAL MENGAJAR IBU DIE</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <style>
+    body { font-family: sans-serif; margin: 20px; background: #f0f8ff; }
+    h1 { text-align: center; color: #003366; }
+    form, table { width: 100%; max-width: 1000px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px #ccc; }
+    input, select, textarea { width: 100%; padding: 8px; margin-top: 5px; border-radius: 5px; border: 1px solid #ccc; }
+    table { margin-top: 30px; border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #999; padding: 8px; text-align: left; }
+    th { background-color: #dceeff; }
+    button { padding: 10px 20px; margin-top: 10px; border: none; border-radius: 5px; background-color: #0077cc; color: white; cursor: pointer; }
+    button:hover { background-color: #005fa3; }
+  </style>
+</head>
+<body>
+
+<h1>JURNAL MENGAJAR IBU DIE</h1>
+
+<form id="jurnalForm">
+  <label>No: <input type="number" id="no" required></label><br><br>
+  <label>Tanggal: <input type="date" id="tanggal" required></label><br><br>
+  <label>Jam ke: <input type="text" id="jamKe" required></label><br><br>
+  <label>Kelas: <input type="text" id="kelas" required></label><br><br>
+  <label>Mata Pelajaran: <input type="text" id="mapel" required></label><br><br>
+  <label>Kegiatan Pembelajaran: <textarea id="kegiatan" required></textarea></label><br><br>
+  <label>Catatan Penting: <textarea id="catatan"></textarea></label><br><br>
+  <label>Keterangan: <input type="text" id="keterangan"></label><br><br>
+  <button type="submit">➕ Tambah Jurnal</button>
+</form>
+
+<br>
+<div style="text-align: center;">
+  <button onclick="downloadExcel()">📥 Unduh ke Excel</button>
+</div>
+
+<table id="jurnalTable">
+  <thead>
+    <tr>
+      <th>No</th>
+      <th>Tanggal</th>
+      <th>Jam ke</th>
+      <th>Kelas</th>
+      <th>Mata Pelajaran</th>
+      <th>Kegiatan</th>
+      <th>Catatan</th>
+      <th>Keterangan</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<script>
+const form = document.getElementById('jurnalForm');
+const tbody = document.querySelector('#jurnalTable tbody');
+let dataJurnal = [];
+
+form.addEventListener('submit', function(e) {
+  e.preventDefault();
+  const row = {
+    no: document.getElementById('no').value,
+    tanggal: document.getElementById('tanggal').value,
+    jamKe: document.getElementById('jamKe').value,
+    kelas: document.getElementById('kelas').value,
+    mapel: document.getElementById('mapel').value,
+    kegiatan: document.getElementById('kegiatan').value,
+    catatan: document.getElementById('catatan').value,
+    keterangan: document.getElementById('keterangan').value
+  };
+
+  dataJurnal.push(row);
+  tambahBarisKeTabel(row);
+  form.reset();
+});
+
+function tambahBarisKeTabel(row) {
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td>${row.no}</td>
+    <td>${row.tanggal}</td>
+    <td>${row.jamKe}</td>
+    <td>${row.kelas}</td>
+    <td>${row.mapel}</td>
+    <td>${row.kegiatan}</td>
+    <td>${row.catatan}</td>
+    <td>${row.keterangan}</td>
+  `;
+  tbody.appendChild(tr);
+}
+
+function downloadExcel() {
+  const ws = XLSX.utils.json_to_sheet(dataJurnal.map(d => ({
+    No: d.no,
+    Tanggal: d.tanggal,
+    "Jam ke": d.jamKe,
+    Kelas: d.kelas,
+    "Mata Pelajaran": d.mapel,
+    "Kegiatan Pembelajaran": d.kegiatan,
+    "Catatan Penting": d.catatan,
+    Keterangan: d.keterangan
+  })));
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Jurnal Mengajar Ibu Die");
+  XLSX.writeFile(wb, "jurnal_mengajar_ibu_die.xlsx");
+}
+</script>
+
+</body>
+</html>
